@@ -91,8 +91,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return managedObjectContext
     }()
 
-    // MARK: - Core Data Saving support
-
+    // MARK: - Core Data Management support
+    
     func saveContext () {
         if managedObjectContext.hasChanges {
             do {
@@ -106,6 +106,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
     }
-
+    
+    func deleteContext(entityName: String) {
+        let appDelegate: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let managedContext: NSManagedObjectContext = appDelegate.managedObjectContext
+        
+        let fetchRequest: NSFetchRequest = NSFetchRequest(entityName: entityName)
+        fetchRequest.returnsObjectsAsFaults = false
+        
+        do {
+            let results = try managedContext.executeFetchRequest(fetchRequest)
+            for managedContext in results {
+                let managedObjectData: NSManagedObject = managedContext as! NSManagedObject
+                managedContext.deleteObject(managedObjectData)
+            }
+        } catch let error as NSError {
+            print("Error: \(error) \(error.userInfo)")
+        }
+    }
+    
 }
-
